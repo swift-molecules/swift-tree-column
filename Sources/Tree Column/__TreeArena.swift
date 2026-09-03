@@ -2,7 +2,7 @@ public import Column
 public import Index
 public import Ownership_Shared_Primitive
 public import Storage_Generational
-public import Store_Primitive
+public import Store_Generational
 public import Tree
 
 @usableFromInline
@@ -15,7 +15,7 @@ struct __TreeArena<Element: ~Copyable, ChildLinks>: ~Copyable {
     var _column: Ownership.Shared<Slot, Column.Generational<Slot>>
 
     @usableFromInline
-    var rootHandle: Store.Generational.Handle?
+    var rootHandle: Store::Store.Generational.Handle?
 
     @inlinable
     package init() {
@@ -50,7 +50,7 @@ struct __TreeArena<Element: ~Copyable, ChildLinks>: ~Copyable {
     }
 
     @inlinable
-    package func liveHandle(_ position: __TreePosition) -> Store.Generational.Handle? {
+    package func liveHandle(_ position: __TreePosition) -> Store::Store.Generational.Handle? {
         let slot = Int(bitPattern: position.index)
         guard
             slot >= 0,
@@ -64,11 +64,11 @@ struct __TreeArena<Element: ~Copyable, ChildLinks>: ~Copyable {
     package mutating func insertNode(
         _ element: consuming Element,
         links: consuming ChildLinks,
-        parent: Store.Generational.Handle?
-    ) -> Store.Generational.Handle {
+        parent: Store::Store.Generational.Handle?
+    ) -> Store::Store.Generational.Handle {
         _column.withUnique(
             consuming: Slot(element: element, links: links, parentHandle: parent)
-        ) { column, node -> Store.Generational.Handle in
+        ) { column, node -> Store::Store.Generational.Handle in
             if column.count == column.capacity {
                 let doubled = Index<Slot>.Count(UInt(2 &* Int(bitPattern: column.capacity)))
                 column.grow(to: doubled)
@@ -78,7 +78,7 @@ struct __TreeArena<Element: ~Copyable, ChildLinks>: ~Copyable {
     }
 
     @inlinable
-    package mutating func removeNode(_ handle: Store.Generational.Handle) -> Element {
+    package mutating func removeNode(_ handle: Store::Store.Generational.Handle) -> Element {
         guard let node = _column.withUnique({ $0.remove(handle) }) else {
 
             preconditionFailure("__TreeArena: live handle failed to resolve on removal")
@@ -93,13 +93,13 @@ struct __TreeArena<Element: ~Copyable, ChildLinks>: ~Copyable {
     }
 
     @inlinable
-    package func parentHandle(of handle: Store.Generational.Handle) -> Store.Generational.Handle? {
+    package func parentHandle(of handle: Store::Store.Generational.Handle) -> Store::Store.Generational.Handle? {
         _column.withColumn { $0[handle].parentHandle }
     }
 
     @inlinable
     package func withElement<R: ~Copyable>(
-        at handle: Store.Generational.Handle,
+        at handle: Store::Store.Generational.Handle,
         _ body: (borrowing Element) -> R
     ) -> R {
         _column.withColumn { body($0[handle].element) }
@@ -107,7 +107,7 @@ struct __TreeArena<Element: ~Copyable, ChildLinks>: ~Copyable {
 
     @inlinable
     package func withLinks<R: ~Copyable>(
-        at handle: Store.Generational.Handle,
+        at handle: Store::Store.Generational.Handle,
         _ body: (borrowing ChildLinks) -> R
     ) -> R {
         _column.withColumn { body($0[handle].links) }
@@ -115,7 +115,7 @@ struct __TreeArena<Element: ~Copyable, ChildLinks>: ~Copyable {
 
     @inlinable
     package mutating func withLinksMut<R: ~Copyable>(
-        at handle: Store.Generational.Handle,
+        at handle: Store::Store.Generational.Handle,
         _ body: (inout ChildLinks) -> R
     ) -> R {
         _column.withUnique { body(&$0[handle].links) }
@@ -123,7 +123,7 @@ struct __TreeArena<Element: ~Copyable, ChildLinks>: ~Copyable {
 
     @inlinable
     package mutating func withElementMut<R: ~Copyable>(
-        at handle: Store.Generational.Handle,
+        at handle: Store::Store.Generational.Handle,
         _ body: (inout Element) -> R
     ) -> R {
         _column.withUnique { body(&$0[handle].element) }

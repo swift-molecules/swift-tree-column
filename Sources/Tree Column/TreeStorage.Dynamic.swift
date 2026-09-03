@@ -1,6 +1,6 @@
 public import Index
 public import Storage_Generational
-public import Store_Primitive
+public import Store_Generational
 public import Tree
 
 extension TreeStorage {
@@ -8,26 +8,26 @@ extension TreeStorage {
     public struct Dynamic<Element: ~Copyable>: ~Copyable {
 
         @usableFromInline
-        var _arena: __TreeArena<Element, [Store.Generational.Handle]>
+        var _arena: __TreeArena<Element, [Store::Store.Generational.Handle]>
 
         @inlinable
-        public init() { _arena = __TreeArena<Element, [Store.Generational.Handle]>() }
+        public init() { _arena = __TreeArena<Element, [Store::Store.Generational.Handle]>() }
 
         @inlinable
         public init(minimumCapacity: Index<Element>.Count) {
-            _arena = __TreeArena<Element, [Store.Generational.Handle]>(
+            _arena = __TreeArena<Element, [Store::Store.Generational.Handle]>(
                 minimumCapacity: minimumCapacity
             )
         }
 
         @inlinable
         public init() where Element: Copyable {
-            _arena = __TreeArena<Element, [Store.Generational.Handle]>()
+            _arena = __TreeArena<Element, [Store::Store.Generational.Handle]>()
         }
 
         @inlinable
         public init(minimumCapacity: Index<Element>.Count) where Element: Copyable {
-            _arena = __TreeArena<Element, [Store.Generational.Handle]>(
+            _arena = __TreeArena<Element, [Store::Store.Generational.Handle]>(
                 minimumCapacity: minimumCapacity
             )
         }
@@ -45,26 +45,26 @@ extension TreeStorage.Dynamic: __TreeStorage where Element: ~Copyable {
     public var _count: Index<Element>.Count { _arena.count }
 
     @inlinable
-    public var _rootHandle: Store.Generational.Handle? {
+    public var _rootHandle: Store::Store.Generational.Handle? {
         get { _arena.rootHandle }
         set { _arena.rootHandle = newValue }
     }
 
     @inlinable
-    public func _liveHandle(_ position: __TreePosition) -> Store.Generational.Handle? {
+    public func _liveHandle(_ position: __TreePosition) -> Store::Store.Generational.Handle? {
         _arena.liveHandle(position)
     }
 
     @inlinable
     public mutating func _insertNode(
         _ element: consuming Element,
-        parent: Store.Generational.Handle?
-    ) -> Store.Generational.Handle {
+        parent: Store::Store.Generational.Handle?
+    ) -> Store::Store.Generational.Handle {
         _arena.insertNode(element, links: [], parent: parent)
     }
 
     @inlinable
-    public mutating func _removeNode(_ handle: Store.Generational.Handle) -> Element {
+    public mutating func _removeNode(_ handle: Store::Store.Generational.Handle) -> Element {
         _arena.removeNode(handle)
     }
 
@@ -72,13 +72,13 @@ extension TreeStorage.Dynamic: __TreeStorage where Element: ~Copyable {
     public mutating func _removeAll() { _arena.removeAll() }
 
     @inlinable
-    public func _parentHandle(of handle: Store.Generational.Handle) -> Store.Generational.Handle? {
+    public func _parentHandle(of handle: Store::Store.Generational.Handle) -> Store::Store.Generational.Handle? {
         _arena.parentHandle(of: handle)
     }
 
     @inlinable
     public func _withElement<R: ~Copyable>(
-        at handle: Store.Generational.Handle,
+        at handle: Store::Store.Generational.Handle,
         _ body: (borrowing Element) -> R
     ) -> R {
         _arena.withElement(at: handle, body)
@@ -86,7 +86,7 @@ extension TreeStorage.Dynamic: __TreeStorage where Element: ~Copyable {
 
     @inlinable
     public mutating func _withElementMut<R: ~Copyable>(
-        at handle: Store.Generational.Handle,
+        at handle: Store::Store.Generational.Handle,
         _ body: (inout Element) -> R
     ) -> R {
         _arena.withElementMut(at: handle, body)
@@ -94,16 +94,16 @@ extension TreeStorage.Dynamic: __TreeStorage where Element: ~Copyable {
 
     @inlinable
     public func _childHandle(
-        at handle: Store.Generational.Handle,
+        at handle: Store::Store.Generational.Handle,
         address index: Index<Self>
-    ) -> Store.Generational.Handle? {
+    ) -> Store::Store.Generational.Handle? {
         let i = Int(bitPattern: index)
         return _arena.withLinks(at: handle) { (i >= 0 && i < $0.count) ? $0[i] : nil }
     }
 
     @inlinable
     public func _validateLink(
-        to parent: Store.Generational.Handle,
+        to parent: Store::Store.Generational.Handle,
         at index: Index<Self>
     ) throws(__TreeError) {
         let i = Int(bitPattern: index)
@@ -113,8 +113,8 @@ extension TreeStorage.Dynamic: __TreeStorage where Element: ~Copyable {
 
     @inlinable
     public mutating func _linkChild(
-        _ child: Store.Generational.Handle,
-        to parent: Store.Generational.Handle,
+        _ child: Store::Store.Generational.Handle,
+        to parent: Store::Store.Generational.Handle,
         at index: Index<Self>
     ) {
         let i = Int(bitPattern: index)
@@ -123,8 +123,8 @@ extension TreeStorage.Dynamic: __TreeStorage where Element: ~Copyable {
 
     @inlinable
     public mutating func _unlinkChild(
-        _ child: Store.Generational.Handle,
-        from parent: Store.Generational.Handle
+        _ child: Store::Store.Generational.Handle,
+        from parent: Store::Store.Generational.Handle
     ) {
         _arena.withLinksMut(at: parent) {
             if let position = $0.firstIndex(of: child) { $0.remove(at: position) }
@@ -132,14 +132,14 @@ extension TreeStorage.Dynamic: __TreeStorage where Element: ~Copyable {
     }
 
     @inlinable
-    public func _childCount(at handle: Store.Generational.Handle) -> Int {
+    public func _childCount(at handle: Store::Store.Generational.Handle) -> Int {
         _arena.withLinks(at: handle) { $0.count }
     }
 
     @inlinable
     public func _forEachChild(
-        at handle: Store.Generational.Handle,
-        _ body: (Store.Generational.Handle) -> Void
+        at handle: Store::Store.Generational.Handle,
+        _ body: (Store::Store.Generational.Handle) -> Void
     ) {
         _arena.withLinks(at: handle) { links in
             links.indices.forEach { index in body(links[index]) }

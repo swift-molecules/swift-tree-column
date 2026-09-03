@@ -35,11 +35,11 @@ let package = Package(
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-molecules/swift-storage-generational.git",
+            url: "https://github.com/swift-molecules/swift-storage-memory.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-atoms/swift-storage.git",
+            url: "https://github.com/swift-atoms/swift-store.git",
             branch: "main"
         ),
     ],
@@ -51,14 +51,14 @@ let package = Package(
                 .product(name: "Index", package: "swift-index"),
                 .product(name: "Column", package: "swift-column"),
                 .product(
-                    name: "Ownership Shared Primitive",
+                    name: "Ownership Shared",
                     package: "swift-ownership-shared"
                 ),
                 .product(
                     name: "Storage Generational",
-                    package: "swift-storage-generational"
+                    package: "swift-storage-memory"
                 ),
-                .product(name: "Store Primitive", package: "swift-storage"),
+                .product(name: "Store Generational", package: "swift-store"),
             ]
         ),
         .testTarget(

@@ -1,5 +1,5 @@
 public import Storage_Generational
-public import Store_Primitive
+public import Store_Generational
 
 @usableFromInline
 struct __TreeNode<Element: ~Copyable, ChildLinks>: ~Copyable {
@@ -8,13 +8,13 @@ struct __TreeNode<Element: ~Copyable, ChildLinks>: ~Copyable {
 
     @usableFromInline var links: ChildLinks
 
-    @usableFromInline var parentHandle: Store.Generational.Handle?
+    @usableFromInline var parentHandle: Store::Store.Generational.Handle?
 
     @usableFromInline
     init(
         element: consuming Element,
         links: consuming ChildLinks,
-        parentHandle: Store.Generational.Handle?
+        parentHandle: Store::Store.Generational.Handle?
     ) {
         self.element = element
         self.links = links
