@@ -2,7 +2,7 @@ public import Column
 public import Index
 public import Ownership_Shared_Primitive
 public import Storage_Generational
-public import Store_Generational
+public import Store
 public import Tree
 
 @usableFromInline

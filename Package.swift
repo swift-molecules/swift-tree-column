@@ -58,7 +58,7 @@ let package = Package(
                     name: "Storage Generational",
                     package: "swift-storage-memory"
                 ),
-                .product(name: "Store Generational", package: "swift-store"),
+                .product(name: "Store", package: "swift-store"),
             ]
         ),
         .testTarget(

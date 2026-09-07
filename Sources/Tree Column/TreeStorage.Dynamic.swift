@@ -1,6 +1,6 @@
 public import Index
 public import Storage_Generational
-public import Store_Generational
+public import Store
 public import Tree
 
 extension TreeStorage {
