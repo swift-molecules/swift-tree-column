@@ -1,4 +1,4 @@
-public import Storage_Generational
+public import Storage
 public import Store
 
 @usableFromInline
