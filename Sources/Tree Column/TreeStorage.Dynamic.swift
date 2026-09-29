@@ -159,7 +159,7 @@ extension __Tree where S: ~Copyable {
     }
 
     @inlinable
-    public init<Element: ~Copyable>(minimumCapacity: Index.Index<Element>.Count)
+    public init<Element: ~Copyable>(minimumCapacity: Index::Index<Element>.Count)
     where S == TreeStorage.Dynamic<Element> {
         self.init(storage: TreeStorage.Dynamic<Element>(minimumCapacity: minimumCapacity))
     }
@@ -170,7 +170,7 @@ extension __Tree where S: ~Copyable {
     }
 
     @inlinable
-    public init<Element>(minimumCapacity: Index.Index<Element>.Count)
+    public init<Element>(minimumCapacity: Index::Index<Element>.Count)
     where S == TreeStorage.Dynamic<Element> {
         self.init(storage: TreeStorage.Dynamic<Element>(minimumCapacity: minimumCapacity))
     }
