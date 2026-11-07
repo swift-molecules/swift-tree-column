@@ -54,7 +54,7 @@ struct `Tree column behaviour` {
     func `a second root insertion is refused`() throws {
         var tree = Tree<Int>()
         _ = try tree.insert(0, at: .root)
-        #expect(throws: (any Error).self) {
+        #expect(throws: (any Swift.Error).self) {
             _ = try tree.insert(1, at: .root)
         }
     }
