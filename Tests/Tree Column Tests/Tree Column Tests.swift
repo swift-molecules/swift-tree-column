@@ -2,5 +2,7 @@ import Testing
 import Tree
 import Tree_Column
 
-@Suite
-struct `Tree Column Tests` {}
+extension `Tree Column Tests`.`Tree Column Tests` {
+    @Suite
+    struct `Tree Column Tests` {}
+}
