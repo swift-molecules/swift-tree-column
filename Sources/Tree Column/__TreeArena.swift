@@ -10,10 +10,6 @@ public import Tree
 
 @usableFromInline
 struct __TreeArena<Element: ~Copyable, ChildLinks>: ~Copyable {
-
-    @usableFromInline
-    typealias Slot = __TreeNode<Element, ChildLinks>
-
     @usableFromInline
     var _column: Ownership.Shared<Slot, Storage<Memory.Allocator<Memory.Heap>.Pool>.Generational<Slot>>
 
@@ -46,6 +42,15 @@ struct __TreeArena<Element: ~Copyable, ChildLinks>: ~Copyable {
         self._column = Ownership.Shared(Storage<Memory.Allocator<Memory.Heap>.Pool>.Generational<Slot>.create(slotCapacity: slots))
         self.rootHandle = nil
     }
+}
+
+extension __TreeArena: Copyable where Element: Copyable, ChildLinks: Copyable {}
+
+extension __TreeArena: Sendable where Element: Sendable, ChildLinks: Sendable {}
+
+extension __TreeArena where Element: ~Copyable {
+    @usableFromInline
+    typealias Slot = __TreeNode<Element, ChildLinks>
 
     @inlinable
     package var count: Index<Element>.Count {
@@ -83,7 +88,6 @@ struct __TreeArena<Element: ~Copyable, ChildLinks>: ~Copyable {
     @inlinable
     package mutating func removeNode(_ handle: Store::Store.Generational.Handle) -> Element {
         guard let node = _column.withUnique({ $0.remove(handle) }) else {
-
             preconditionFailure("__TreeArena: live handle failed to resolve on removal")
         }
         return node.element
@@ -130,9 +134,4 @@ struct __TreeArena<Element: ~Copyable, ChildLinks>: ~Copyable {
         _ body: (inout Element) -> R
     ) -> R {
         _column.withUnique { body(&$0[handle].element) }
-    }
-}
-
-extension __TreeArena: Copyable where Element: Copyable, ChildLinks: Copyable {}
-
-extension __TreeArena: Sendable where Element: Sendable, ChildLinks: Sendable {}
+    }}
